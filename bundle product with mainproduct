@@ -1,0 +1,128 @@
+                {% assign cross_products = product.metafields.custom.cross_product.value %}
+                {% if cross_products != blank %}
+                  <div class="devCrossProducts">
+                    <div class="devBlockTitle">
+                      {% if block.settings.title_bundle != blank %}
+                        <div class="devTitleBundle">
+                          <h3>{{ block.settings.title_bundle }}</h3>
+                        </div>
+                      {% endif %}
+                      {% if product.metafields.custom.compare_wallet_page != blank %}
+                        <div class="devWalletUrl">
+                          <a href="{{ product.metafields.custom.compare_wallet_page }}">Compare Wallets</a>
+                        </div>
+                      {% endif %}
+                    </div>
+                    <div class="cross-sell-swatch-container">
+                      {% for cross_product in cross_products %}
+                        {% if cross_product != blank %}
+                          <button
+                            class="cross-sell-swatch"
+                            data-price="{{ cross_product.price | divided_by: 100 }}"
+                            data-product-id="{{ cross_product.selected_or_first_available_variant.id }}"
+                          >
+                            {{ cross_product.title }}
+                          </button>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                {% endif %}
+                <div class="total-price" data-price="{{ product.price | divided_by: 100 }}">
+                  Total: {{ product.price | money }}
+                </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      var mainProductPrice = parseFloat(document.querySelector('.total-price').dataset.price);
+      var totalPrice = mainProductPrice;
+      var selectedProduct = null;
+
+      document.querySelectorAll('.cross-sell-swatch').forEach(function(swatch) {
+          swatch.addEventListener('click', function() {
+              var productId = swatch.dataset.productId;
+              var productPrice = parseFloat(swatch.dataset.price);
+
+              if (swatch.classList.contains('selected')) {
+                  // Deselect the swatch if it's already selected
+                  swatch.classList.remove('selected');
+                  totalPrice = mainProductPrice;
+                  selectedProduct = null;
+              } else {
+                  // Deselect any previously selected swatch
+                  if (selectedProduct) {
+                      selectedProduct.classList.remove('selected');
+                      totalPrice = mainProductPrice;
+                  }
+
+                  // Select the new swatch
+                  swatch.classList.add('selected');
+                  totalPrice += productPrice;
+                  selectedProduct = swatch;
+              }
+
+              document.querySelector('.total-price').textContent = 'Total: $' + totalPrice.toFixed(2);
+          });
+      });
+
+
+        // Bundling
+
+        function multivariant(formData, callback) {
+            fetch(window.Shopify.routes.root + 'cart/add.js', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                callback(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
+        var submitBtn = document.querySelector('.multi-variant');
+            submitBtn.addEventListener('click', function() {
+                var formData = {
+                    'items': []
+                };
+                var product_var = parseInt(this.dataset.id);
+               formData.items.push({
+                        'id': product_var,
+                        'quantity': 1
+                    });
+                var mainContainer = this.closest('.product__info-wrapper');
+                var formBtn = mainContainer.querySelector('product-form');
+               var slelect_var = document.querySelectorAll('.cross-sell-swatch.selected');
+                slelect_var.forEach(productId => {
+                  var variantId = parseInt(productId.getAttribute('data-product-id'));
+                  console.log(variantId);
+                    formData.items.push({
+                        'id': variantId,
+                        'quantity': 1
+                    });
+                });
+
+                if (formData.items.length === 1) {
+                    var firstItem = formData.items[0];
+                    formBtn.querySelector('input[name="id"]').value = firstItem.id;
+                    formBtn.querySelector('.product-form__submit').click();
+                } else {
+                    var lastItem = formData.items.pop();
+                    multivariant(formData, function(responseData) {
+                        formBtn.querySelector('input[name="id"]').value = lastItem.id;
+                        mainContainer.querySelector('.product-form__submit').click();
+                    });
+                }
+            });
+
+    
+
+
+
+    });
+</script>
