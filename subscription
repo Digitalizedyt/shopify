@@ -1,0 +1,322 @@
+Subscription       {% if product.selling_plan_groups.size == 1 %}
+                  {% for group in product.selling_plan_groups %}
+                    {% for selling_plan in group.selling_plans %}
+                      <div class="selling-plan devSingleSellingPlan" selling-plan="{{ selling_plan.id }}">
+                        {{ selling_plan.name }}
+                      </div>
+                    {% endfor %}
+                  {% endfor %}
+                {% else %}
+                  <div class="selling-plan" style="display:none;"></div>
+                  <div class="subscription-container">
+                    {% for group in product.selling_plan_groups %}
+                      {% for selling_plan in group.selling_plans %}
+                        {% for pa in selling_plan.price_adjustments %}
+                          {% if forloop.first %}
+                            {% assign off = pa.value %}
+                            {% assign off_price = pa.value | divided_by: 100.0 | times: product.price %}
+                            {% assign off_price1 = product.price | minus: off_price | money %}
+                          {% endif %}
+                        {% endfor %}
+                      {% endfor %}
+                    {% endfor %}
+                    <label
+                      class="one-time-order checkbox-container "
+                      {% unless product.has_only_default_variant %}
+                        style="border-top:0"
+                      {% endunless %}
+                    >
+                      <input name="subsubsub" type="radio" class="one-time-order-checkbox" autocomplete="off">
+                      <div class="one-time-text">
+                        <p>
+                          <span class="c_one_txt">One-Time Purchase </span>
+                          <span class="c_subs_price">{{ product.price | money }}</span>
+                        </p>
+                      </div>
+                    </label>
+                    <label class="subscription-order checkbox-container removebg">
+                      <input name="subsubsub" type="radio" class="subscription-checkbox" checked autocomplete="off">
+                      {% if off %}
+                        <div class="Subscription-off">
+                          <span class="c_substxt"> <span> Subscribe </span>& Save 40% </span>
+                          <div class="c_prod_scnd_off_price">
+                            <!-- <del> {{ product.price | money }} </del> -->
+                            <span class="c_subs_price"> {{ off_price1 }}</span>
+                          </div>
+                        </div>
+                      {% endif %}
+
+                      <div class="customList">
+                        <ul class="customul">
+                          <li class="itemcopy" style="color:{{product.metafields.custom.review_stars_color}}">
+                            <div class="heart">
+                              <svg
+                                style="background:{{product.metafields.custom.review_stars_color}};border-radius:50%;"
+                                fill="{{product.metafields.custom.review_stars_color}}"
+                                width="18px"
+                                height="18px"
+                                viewBox="0 0 32 32"
+                                version="1.1"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>heart</title> <path d="M0.256 12.16q0.544 2.080 2.080 3.616l13.664 14.144 13.664-14.144q1.536-1.536 2.080-3.616t0-4.128-2.080-3.584-3.584-2.080-4.16 0-3.584 2.080l-2.336 2.816-2.336-2.816q-1.536-1.536-3.584-2.080t-4.128 0-3.616 2.080-2.080 3.584 0 4.128z"></path> </g>
+                              </svg>
+                            </div>
+                            <div class="infotext">Save 40% off first month, then 20% off for life</div>
+                          </li>
+                          <li class="itemcopy">
+                            <div class="heart">
+                              <svg
+                                fill="#000000"
+                                style="background:black;border-radius:50%;"
+                                width="18px"
+                                height="18px"
+                                viewBox="0 0 32 32"
+                                version="1.1"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>heart</title> <path d="M0.256 12.16q0.544 2.080 2.080 3.616l13.664 14.144 13.664-14.144q1.536-1.536 2.080-3.616t0-4.128-2.080-3.584-3.584-2.080-4.16 0-3.584 2.080l-2.336 2.816-2.336-2.816q-1.536-1.536-3.584-2.080t-4.128 0-3.616 2.080-2.080 3.584 0 4.128z"></path> </g>
+                              </svg>
+                            </div>
+                            <div class="infotext">Free shipping on all orders in the US</div>
+                          </li>
+                          <li class="itemcopy">
+                            <div class="heart">
+                              <svg
+                                fill="#000000"
+                                style="background:black;border-radius:50%;"
+                                width="18px"
+                                height="18px"
+                                viewBox="0 0 32 32"
+                                version="1.1"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>heart</title> <path d="M0.256 12.16q0.544 2.080 2.080 3.616l13.664 14.144 13.664-14.144q1.536-1.536 2.080-3.616t0-4.128-2.080-3.584-3.584-2.080-4.16 0-3.584 2.080l-2.336 2.816-2.336-2.816q-1.536-1.536-3.584-2.080t-4.128 0-3.616 2.080-2.080 3.584 0 4.128z"></path> </g>
+                              </svg>
+                            </div>
+                            <div class="infotext">Modify, pause or cancel any time</div>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="select-container">
+                        <select name="selling_plan">
+                          {% for group in product.selling_plan_groups %}
+                            {% for selling_plan in group.selling_plans %}
+                              <option value="{{ selling_plan.id }}">
+                                {{ selling_plan.name }}
+                              </option>
+                            {% endfor %}
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </label>
+                  </div>
+                {% endif %}       <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        
+           
+             let onloadplan = document.querySelector('.select-container select').options[0].value;
+              document.querySelector('div.selling-plan').setAttribute("selling-plan", onloadplan);
+             console.log(onloadplan)
+          document.querySelectorAll('.subscription-container input').forEach(function (radioButton, index) {
+              if (index == 0 && radioButton.classList.contains('subscription-checkbox')) {
+                  let subscriptionContainer = radioButton.closest('.subscription-container');
+                  let selectContainer = subscriptionContainer.querySelector('.select-container');
+                  let oneTimeOrder = subscriptionContainer.querySelector('.one-time-order');
+                  let subscriptionOrder = subscriptionContainer.querySelector('.subscription-order');
+                  let mainDiv = radioButton.closest('.product__info-container');
+
+                  selectContainer.style.display = 'block';
+                  oneTimeOrder.classList.remove('removebg');
+                  subscriptionOrder.classList.add('removebg');
+
+                  let selectElement = mainDiv.querySelector('.select-container select');
+                  let firstOptionValue = selectElement.options[0].value;
+                   console.log(firstOptionValue);
+                  mainDiv.querySelector('div.selling-plan').setAttribute("selling-plan", firstOptionValue);
+              }
+          });
+
+              document.querySelectorAll('.subscription-container input').forEach(function (radioButton) {
+              radioButton.addEventListener("change", function (event) {
+                  let subscriptionContainer = event.currentTarget.closest('.subscription-container');
+                  let selectContainer = subscriptionContainer.querySelector('.select-container');
+                  let oneTimeOrder = subscriptionContainer.querySelector('.one-time-order');
+                  let subscriptionOrder = subscriptionContainer.querySelector('.subscription-order');
+                  let mainDiv = event.currentTarget.closest('.product__info-container');
+                   let cart_btn = document.querySelectorAll('.product-form__submit.button');
+
+                  if (event.target.classList.contains('one-time-order-checkbox')) {
+                      mainDiv.querySelector('div.selling-plan').removeAttribute("selling-plan");
+                      selectContainer.style.display = 'none';
+                      oneTimeOrder.classList.add('removebg');
+                      subscriptionOrder.classList.remove('removebg');
+                      cart_btn.forEach(btn=>{
+                      setTimeout(() => {
+                     btn.innerHTML = `<span>Buy Now - <span class="devPrice">$49.98</span> <span>`
+                        }, "1000");
+                   })
+
+                  } else {
+                     console.log('clicked');
+                      selectContainer.style.display = 'block';
+                      oneTimeOrder.classList.remove('removebg');
+                      subscriptionOrder.classList.add('removebg');
+                      let selectElement = mainDiv.querySelector('.select-container select');
+
+                      let firstOptionValue = selectElement.options[0].value;
+                      console.log(firstOptionValue);
+                      mainDiv.querySelector('div.selling-plan').setAttribute("selling-plan", firstOptionValue);
+                      
+                           cart_btn.forEach(btn=>{
+                      setTimeout(() => {
+                     btn.innerHTML = `<span>Buy Now - <span class="devPrice">$29.99<del>$49.98</del></span></span>`
+                        }, "1000");
+                    })
+                      
+                  }
+              });
+          });
+
+          document.querySelectorAll(".select-container select").forEach(function (radioButton) {
+              radioButton.addEventListener("change", function (event) {
+                  let sellingPlan = radioButton.value;
+                  let topDiv = event.currentTarget.closest('.product__info-container');
+                  topDiv.querySelector('div.selling-plan').setAttribute("selling-plan", sellingPlan);
+              });
+          });
+
+
+
+        let quantityInput = document.querySelector('.quantity__input');
+         document.querySelector('#quantity').addEventListener('change' , function(){
+          var quantityInputVal = quantityInput.value;
+            quantityInput.value = this.value;
+        });
+        let popupCustom = document.querySelector('.devPopupModal');
+        let closePopup = document.querySelectorAll('.modal-close1');
+        let body = document.querySelector('body');
+
+        closePopup.forEach(function(closebtn) {
+            closebtn.addEventListener('click', function() {
+                popupCustom.classList.remove('devopenPopup');
+                body.style.overflow = 'auto';
+                body.classList.remove('has-activeModal');
+            });
+        });
+
+             document.querySelectorAll('.devProduct__submit').forEach(function (btnCart){
+              btnCart.addEventListener('click' , function(e) {
+                console.log(btnCart);
+                let inputQuantity = quantityInput.value;
+                var varid = this.dataset.id;
+                var productID = parseInt(this.getAttribute("data-productid"));
+
+
+                let sellingId = btnCart.closest('.product__info-container').querySelector('div[selling-plan]');
+                console.log(sellingId, varid);
+                e.preventDefault();
+                console.log("hello");
+                let sellingCheck = document.querySelector('.subscription-order input');
+                let data;
+
+                if (sellingId) {
+                    let idPlan = sellingId.getAttribute('selling-plan');
+                    data = {
+                        "items": [{
+                            "id": varid,
+                            "quantity": inputQuantity,
+                            "selling_plan": idPlan
+                        }]
+                    };
+                } else {
+                    data = {
+                        "items": [{
+                            "id": varid,
+                            "quantity": inputQuantity
+                        }]
+                    };
+                }
+
+              console.log(data);
+              var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/cart/add.js', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onload = function() {
+                    if (xhr.status >= 200 && xhr.status < 400) {
+                        console.log('Product added to cart');
+                        fetch('/cart.js').then(function(r) {
+                            return r.json();
+                        }).then(function(r) {
+                            var all_items = r.items;
+                            var img_Pro = document.querySelector('.productView-img-container img');
+                            var item_quantity = document.querySelector('.productView-item-quantity');
+                            var Total_price = document.querySelector('.previewCartCheckout-price');
+                            var total_items = document.querySelector('.previewCartCheckout-quantity span');
+                            let sellingId = btnCart.closest('.product__info-container').querySelector('div[selling-plan]');
+                            let selling_price = document.querySelector('.productView-price');
+                            let subsText = document.querySelector('.devSubscription');
+                            var selling_name = document.querySelector('.devSubscription span');
+                            all_items.forEach(function(ll) {
+
+                             var check_current =  document.querySelector('.one-time-order-checkbox:checked');
+                              let not_selling = ll.selling_plan_allocation;
+                              console.log(not_selling);
+                              if (check_current && not_selling == null){
+                                if (productID === ll.product_id  &&  not_selling == null ) {
+                                  console.log('no selling');
+                                    item_quantity.textContent = ll.quantity + ' ' + 'x';
+                                    total_items.textContent = r.item_count;
+                                     subsText.style.display="none";
+                                    selling_price.textContent = '$' + (ll.price / 100);
+                                    Total_price.textContent = '$' + (r.original_total_price / 100);
+                                }
+                              }
+                              else {
+                                if (sellingId && ll.selling_plan_allocation) {
+                                  let idPlan = parseInt(sellingId.getAttribute('selling-plan'));
+                                  let IdSellingPlan = ll.selling_plan_allocation.selling_plan.id;
+                                  if (productID === ll.product_id && idPlan === IdSellingPlan ) {
+                                    subsText.style.display="block";
+                                    selling_price.textContent = '$' + ( ll.selling_plan_allocation.price / 100);
+                                    item_quantity.textContent = ll.quantity + ' ' + 'x';
+                                    total_items.textContent = r.item_count;
+                                    Total_price.textContent = '$' + (r.original_total_price / 100);
+                                    selling_name.textContent = ll.selling_plan_allocation.selling_plan.name;
+                                }
+
+                              }
+                              }
+
+                            });
+
+                            body.classList.add('has-activeModal');
+                            popupCustom.classList.add('devopenPopup');
+                            body.style.overflow = 'hidden';
+                        });
+                        var cartopen = document.getElementById('cart-drawer');
+
+                        fetch('/cart').then(function(response) {
+                            return response.text();
+                        }).then(function(updatedContent) {
+                            const parser = new DOMParser();
+
+                        });
+                      if (cartopen){
+                         setTimeout(function() {
+                            cartopen.classList.add('active');
+                        }, 1000);
+                      }
+
+                    } else {
+                        console.log('Error: ' + xhr.statusText);
+                    }
+                };
+                xhr.onerror = function() {
+                    console.log('Error: ' + xhr.statusText);
+                };
+                xhr.send(JSON.stringify(data));
+        });
+         });
+           });
+    </script>
